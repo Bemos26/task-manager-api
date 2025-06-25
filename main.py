@@ -5,13 +5,32 @@ from typing import List, Optional
 
 app = FastAPI()
 
+# Step 1: Define allowed status values using Enum
 class StatusEnum(str, Enum):
     pending = "pending"
     in_progress = "in_progress"
     completed = "completed"
 
+# Step 2: Define the structure of a Task using Pydantic
 class Task(BaseModel):
     id: int
     title: str
     description: Optional[str] = None
     status: StatusEnum = StatusEnum.pending
+
+# Step 3: Simulate database with an in-memory list
+tasks: List[Task] = []
+task_counter = 1
+
+# Step 4: Define your routes
+@app.get("/tasks", response_model=List[Task])
+def get_tasks():
+    return tasks
+
+@app.post("/tasks", response_model=Task, status_code=201)
+def create_task(task: Task):
+    global task_counter
+    task.id = task_counter
+    task_counter += 1
+    tasks.append(task)
+    return task
