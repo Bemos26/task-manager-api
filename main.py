@@ -34,3 +34,10 @@ def create_task(task: Task):
     task_counter += 1
     tasks.append(task)
     return task
+
+@app.get("/tasks/{task_id}", response_model=Task)
+def get_task_by_id(task_id: int):
+    for task in tasks:
+        if task.id == task_id:
+            return task
+    raise HTTPException(status_code=404, detail="Task not found")
