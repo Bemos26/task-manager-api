@@ -41,3 +41,22 @@ def get_task_by_id(task_id: int):
         if task.id == task_id:
             return task
     raise HTTPException(status_code=404, detail="Task not found")
+
+@app.delete("/tasks/{task_id}", status_code=204)
+def delete_task(task_id: int):
+    for index, task in enumerate(tasks):
+        if task.id == task_id:
+            del tasks[index]
+            return
+    raise HTTPException(status_code=404, detail="Task not found")
+
+
+
+@app.put("/tasks/{task_id}", response_model=Task)
+def update_task(task_id: int, updated_task: Task):
+    for index, task in enumerate(tasks):
+        if task.id == task_id:
+            updated_task.id = task_id  # Preserve the original ID
+            tasks[index] = updated_task
+            return updated_task
+    raise HTTPException(status_code=404, detail="Task not found")
